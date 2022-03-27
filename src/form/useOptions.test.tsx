@@ -222,5 +222,12 @@ describe("useOptions", () => {
     await waitFor(() => expect(result.current.user.value).toEqual(["2"]));
     await waitFor(() => expect(result.current.post.value).toEqual([]));
     await waitFor(() => expect(result.current.comment.value).toEqual([]));
+    await waitFor(() =>
+      expect(result.current.post.options).toEqual([
+        { level: 1, value: 14, parent: 2, label: "post4" },
+        { level: 1, value: 15, parent: 2, label: "post5" },
+      ])
+    );
+    await waitFor(() => expect(result.current.comment.options).toEqual([]));
   });
 });
