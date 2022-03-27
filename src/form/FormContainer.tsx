@@ -1,6 +1,6 @@
 import React from "react";
 import Form from "./Form";
-import { Options } from "./store";
+import { Options } from "./selectService";
 import { SelectProvider } from "./useSelect";
 
 type Props = {

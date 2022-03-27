@@ -85,7 +85,6 @@ export const selectService = (values: Values, options: Options) => {
 
     return (valueSelect: number) => {
       const valueObj = values.find(sameLevelAndValue(level)(valueSelect));
-
       if (valueObj) {
         const elementsToDelete = collectAllValuesToDelete(
           [valueObj],

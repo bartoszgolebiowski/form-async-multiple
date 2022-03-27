@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Options, removeDuplicate } from "./store";
+import { Options, removeDuplicate } from "./selectService";
 import useSelectContext from "./useSelect";
 
 const useOptions = (
@@ -13,6 +13,7 @@ const useOptions = (
   const valueStableRef = value.join(",");
   const parentIds =
     level > 0 ? findValuesString(level - 1).map(Number) : "root";
+  const options = findOptionsForParents(parentIds)(level);
 
   useEffect(() => {
     if (getOptions) {
@@ -30,7 +31,7 @@ const useOptions = (
 
   return {
     value,
-    options: findOptionsForParents(parentIds)(level),
+    options,
     onChange,
   } as const;
 };

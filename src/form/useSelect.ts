@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import constate from "constate";
-import { Options, selectServiceFactory, Values } from "./store";
+import { Options, selectServiceFactory, Values } from "./selectService";
 
 type Props = {
   getOptions: () => Promise<Options>;

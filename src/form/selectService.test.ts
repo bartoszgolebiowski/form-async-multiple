@@ -1,4 +1,9 @@
-import { Options, selectService, Values } from "./store";
+import {
+  Options,
+  removeDuplicate,
+  selectService,
+  Values,
+} from "./selectService";
 
 const V: Values = [
   { level: 0, value: 1, parent: null },
@@ -31,7 +36,7 @@ const O: Options = [
   { level: 2, value: 212, parent: 11, label: "comment12" },
 ];
 
-describe("selectUnselectService functionallity", () => {
+describe("selectService functionallity", () => {
   it("should add new value", () => {
     expect(selectService([], O)(0)(1)).toEqual([
       {
@@ -102,4 +107,13 @@ describe("selectUnselectService functionallity", () => {
       },
     ]);
   });
+
+  it("should remove duplicates", () => {
+    expect(removeDuplicate(O)).toEqual(O);
+  });
+
+  it("should remove duplicates 2", () => {
+    expect(removeDuplicate([...O, ...O, ...O, ...O])).toEqual(O);
+  });
+
 });
