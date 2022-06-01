@@ -1,7 +1,7 @@
 import {
   Options,
   removeDuplicate,
-  selectService,
+  selectServiceImpl,
   Values,
 } from "./selectService";
 
@@ -38,7 +38,7 @@ const O: Options = [
 
 describe("selectService functionallity", () => {
   it("should add new value", () => {
-    expect(selectService([], O)(0)(1)).toEqual([
+    expect(selectServiceImpl([], O)(0)(1)).toEqual([
       {
         level: 0,
         value: 1,
@@ -48,7 +48,7 @@ describe("selectService functionallity", () => {
   });
   it("should remove value", () => {
     expect(
-      selectService(
+      selectServiceImpl(
         [
           {
             level: 0,
@@ -62,10 +62,10 @@ describe("selectService functionallity", () => {
   });
 
   it("should remove value and all children 1", () => {
-    expect(selectService(V, O)(0)(1)).toEqual([]);
+    expect(selectServiceImpl(V, O)(0)(1)).toEqual([]);
   });
   it("should remove value and all children 2", () => {
-    expect(selectService(V, O)(1)(11)).toEqual([
+    expect(selectServiceImpl(V, O)(1)(11)).toEqual([
       {
         level: 0,
         parent: null,
@@ -84,7 +84,7 @@ describe("selectService functionallity", () => {
     ]);
   });
   it("should remove value and all children 3", () => {
-    expect(selectService(V, O)(1)(12)).toEqual([
+    expect(selectServiceImpl(V, O)(1)(12)).toEqual([
       {
         level: 0,
         parent: null,

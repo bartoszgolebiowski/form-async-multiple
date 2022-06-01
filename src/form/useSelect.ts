@@ -1,28 +1,29 @@
 import { useEffect, useState } from "react";
 import constate from "constate";
-import { Options, selectServiceFactory, Values } from "./selectService";
+import { Options, selectService, Values } from "./selectService";
 
 type Props = {
-  getOptions: () => Promise<Options>;
+  getOptionsForRoot: () => Promise<Options>;
 };
 
-const useSelect = ({ getOptions }: Props) => {
-  const [v, setV] = useState<Values>([]);
-  const [o, setO] = useState<Options>([]);
+const useSelect = ({ getOptionsForRoot }: Props) => {
+  const [value, setValue] = useState<Values>([]);
+  const [options, setOptions] = useState<Options>([]);
 
-  const { findOptionsForParents, findValuesString, invoke } =
-    selectServiceFactory(v, o);
+  const { findOptionsForParents, findValuesForLevelAsStrings, findValuesForLevelAsNumbers, invoke } =
+    selectService(value, options);
 
   useEffect(() => {
-    getOptions().then(setO);
-  }, [getOptions, setO]);
+    getOptionsForRoot().then(setOptions);
+  }, [getOptionsForRoot, setOptions]);
 
   return {
     findOptionsForParents,
-    findValuesString,
+    findValuesForLevelAsStrings,
+    findValuesForLevelAsNumbers,
     invoke,
-    setV,
-    setO,
+    setValue,
+    setOptions,
   } as const;
 };
 

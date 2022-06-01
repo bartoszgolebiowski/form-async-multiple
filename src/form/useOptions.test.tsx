@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable testing-library/render-result-naming-convention */
-
 import { renderHook } from "@testing-library/react-hooks";
 import { act } from "react-dom/test-utils";
 import useOptions from "./useOptions";
@@ -43,7 +40,7 @@ const onChangeEventMock = (value: string) =>
 describe("useOptions", () => {
   it("should invoke getUsers from SelectProvider to fill up initial options", async () => {
     const Wrapper: React.FC = (props) => (
-      <SelectProvider {...props} getOptions={getUsers}></SelectProvider>
+      <SelectProvider {...props} getOptionsForRoot={getUsers}></SelectProvider>
     );
     const { result: resultUser, waitFor } = renderHook(
       () => useOptions(0, getPosts),
@@ -73,7 +70,7 @@ describe("useOptions", () => {
 
   it("should set correctly option values", async () => {
     const Wrapper: React.FC = (props) => (
-      <SelectProvider {...props} getOptions={getUsers}></SelectProvider>
+      <SelectProvider {...props} getOptionsForRoot={getUsers}></SelectProvider>
     );
 
     const useCombinedHook = () => {
@@ -145,7 +142,7 @@ describe("useOptions", () => {
 
   it("should unset correctly option values", async () => {
     const Wrapper: React.FC = (props) => (
-      <SelectProvider {...props} getOptions={getUsers}></SelectProvider>
+      <SelectProvider {...props} getOptionsForRoot={getUsers}></SelectProvider>
     );
 
     const useCombinedHook = () => {

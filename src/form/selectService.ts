@@ -3,22 +3,19 @@ export type Options = SingleOption[];
 
 type SingleValue = { value: number; parent: number | null; level: number };
 
-type SingleOption = {
-  value: number;
-  parent: number | null;
-  level: number;
+type SingleOption = SingleValue & {
   label: string;
 };
 
 const isSameLevel =
   (level: number) =>
-  <T extends { level: number }>(element: T) =>
-    element.level === level;
+    <T extends { level: number }>(element: T) =>
+      element.level === level;
 
 const isSameValue =
   (value: number) =>
-  <T extends { value: number }>(element: T) =>
-    element.value === value;
+    <T extends { value: number }>(element: T) =>
+      element.value === value;
 
 const isParentIncluded = (parentIds: number[]) => (value: SingleValue) =>
   parentIds.includes(value.parent!);
@@ -39,31 +36,44 @@ const mapToValue = <T extends { value: number }>(value: T) => value.value;
 const mapToString = <T extends { value: number }>(value: T) =>
   String(value.value);
 
+const ROOT_LEVEL = 0;
+
 const selectors = (values: Values, options: Options) => {
-  const findOptions = (level: number) => options.filter(isSameLevel(level));
-  const findValues =
+  const findOptionsForLevel = (level: number) => options.filter(isSameLevel(level));
+  const findValuesForLevel =
     (level: number) =>
-    <T>(callback: (value: SingleValue) => T): T[] =>
-      values.filter(isSameLevel(level)).map(callback);
+      <T>(callback: (value: SingleValue) => T): T[] =>
+        values.filter(isSameLevel(level)).map(callback);
+  const findValuesForLevelAsStrings = (level: number) => findValuesForLevel(level)(mapToString)
+  const findValuesForLevelAsNumbers = (level: number) => findValuesForLevel(level);
+
+  const findOptionsForParents = (parentIds: number[] | "root") => (level: number) =>
+    parentIds === "root"
+      ? findOptionsForLevel(ROOT_LEVEL)
+      : findOptionsForLevel(level).filter(isParentIncluded(parentIds))
 
   return {
-    findOptions,
-    findOptionsForParents: (parentIds: number[] | "root") => (level: number) =>
-      parentIds === "root"
-        ? findOptions(0)
-        : findOptions(level).filter(isParentIncluded(parentIds)),
-    findValues,
-    findValuesString: (level: number) => findValues(level)(mapToString),
+    findOptionsForLevel,
+    findOptionsForParents,
+    findValuesForLevel,
+    findValuesForLevelAsStrings,
+    findValuesForLevelAsNumbers
   };
 };
 
-export const selectServiceFactory = (values: Values, options: Options) => ({
+export const selectService = (values: Values, options: Options) => ({
   ...selectors(values, options),
-  invoke: selectService(values, options),
+  invoke: selectServiceImpl(values, options),
 });
 
-export const selectService = (values: Values, options: Options) => {
-  const { findOptions, findValues } = selectors(values, options);
+/**
+ * Service used for manipulating values and options for select component
+ * @param values Values of all select components
+ * @param options Options of all select components
+ * @returns (level:number) => (value:number) => where level is level of select component and value is value of select component
+ */
+export const selectServiceImpl = (values: Values, options: Options) => {
+  const { findOptionsForLevel, findValuesForLevel } = selectors(values, options);
   return (level: number) => {
     const collectAllValuesToDelete = (
       toDelete: SingleValue[],
@@ -71,7 +81,7 @@ export const selectService = (values: Values, options: Options) => {
     ) => {
       const collectToDelete = (parentIdsToDelete: number[], level: number) => {
         if (parentIdsToDelete.length === 0) return;
-        const valuesLevel = findValues(level)(mapToObject);
+        const valuesLevel = findValuesForLevel(level)(mapToObject);
         const valuesToDelete = valuesLevel.filter(
           isParentIncluded(parentIdsToDelete)
         );
@@ -83,12 +93,12 @@ export const selectService = (values: Values, options: Options) => {
       return toDelete;
     };
 
-    return (valueSelect: number) => {
-      const valueObj = values.find(sameLevelAndValue(level)(valueSelect));
+    return (valueFromSelect: number) => {
+      const valueObj = values.find(sameLevelAndValue(level)(valueFromSelect));
       if (valueObj) {
         const elementsToDelete = collectAllValuesToDelete(
           [valueObj],
-          valueSelect
+          valueFromSelect
         );
         const removeValuesPredicate = (value: SingleValue) =>
           !elementsToDelete.some(sameLevelAndValue(value.level)(value.value));
@@ -99,9 +109,9 @@ export const selectService = (values: Values, options: Options) => {
           ...values,
           {
             level,
-            value: valueSelect,
+            value: valueFromSelect,
             parent:
-              findOptions(level).find(isSameValue(valueSelect))?.parent ?? null,
+              findOptionsForLevel(level).find(isSameValue(valueFromSelect))?.parent ?? null,
           },
         ];
       }

@@ -4,7 +4,7 @@ import { Options } from "./selectService";
 import { SelectProvider } from "./useSelect";
 
 type Props = {
-  getOptions: () => Promise<Options>;
+  getOptionsForRoot: () => Promise<Options>;
 };
 
 const FormContainer: React.FC<Props> = (props) => (
