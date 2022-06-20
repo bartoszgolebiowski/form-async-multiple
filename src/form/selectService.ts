@@ -67,17 +67,18 @@ export const selectService = (values: Values, options: Options) => ({
 });
 
 /**
- * Service used for manipulating values and options for select component
- * @param values Values of all select components
- * @param options Options of all select components
- * @returns (level:number) => (value:number) => where level is level of select component and value is value of select component
+ * Service used for manipulating values and options for select component  
+ * @param values Values of all select components  
+ * @param options Options of all select components  
+ * @returns (level:number) => (value:number) =>   
+ * where level is level of select component and value is value of select component
  */
 export const selectServiceImpl = (values: Values, options: Options) => {
   const { findOptionsForLevel, findValuesForLevel } = selectors(values, options);
   return (level: number) => {
     const collectAllValuesToDelete = (
       toDelete: SingleValue[],
-      valueFromSelect: number
+      value: number
     ) => {
       const collectToDelete = (parentIdsToDelete: number[], level: number) => {
         if (parentIdsToDelete.length === 0) return;
@@ -89,16 +90,16 @@ export const selectServiceImpl = (values: Values, options: Options) => {
         collectToDelete(valuesToDelete.map(mapToValue), level + 1);
       };
 
-      collectToDelete([valueFromSelect], level + 1);
+      collectToDelete([value], level + 1);
       return toDelete;
     };
 
-    return (valueFromSelect: number) => {
-      const valueObj = values.find(sameLevelAndValue(level)(valueFromSelect));
+    return (value: number) => {
+      const valueObj = values.find(sameLevelAndValue(level)(value));
       if (valueObj) {
         const elementsToDelete = collectAllValuesToDelete(
           [valueObj],
-          valueFromSelect
+          value
         );
         const removeValuesPredicate = (value: SingleValue) =>
           !elementsToDelete.some(sameLevelAndValue(value.level)(value.value));
@@ -109,9 +110,9 @@ export const selectServiceImpl = (values: Values, options: Options) => {
           ...values,
           {
             level,
-            value: valueFromSelect,
+            value,
             parent:
-              findOptionsForLevel(level).find(isSameValue(valueFromSelect))?.parent ?? null,
+              findOptionsForLevel(level).find(isSameValue(value))?.parent ?? null,
           },
         ];
       }

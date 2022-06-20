@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import { Options, removeDuplicate } from "./selectService";
 import useSelectContext from "./useSelect";
 
-/*
+/**
  * Custom hook used for creating properties for select component.
  * @param level positive integer, where 0 is the first select component.
  * @param getOptionsForNextLevel Promise based function that returns options for next select component.
- * @returns Object where: 
- *    values which represents the selected values, 
- *    options which represents the options for next select component 
- *    onChange which represents the function to change the value of the select component.
+ * @returns Object where:  
+ * values which represents the selected values,  
+ * options which represents the options for next select component  
+ * onChange which represents the function to change the value of the select component. 
  */
 const useOptions = (
   level: number,
